@@ -8,7 +8,14 @@ use App\Http\Controllers\PauseController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    $activeTickets = \App\Models\Ticket::where('status', 'in_progress')->with('agent')->get();
+    $recentTickets = \App\Models\Ticket::where('status', 'completed')
+        ->whereDate('completed_at', \Carbon\Carbon::today())
+        ->orderBy('completed_at', 'desc')
+        ->take(10)
+        ->get();
+
+    return view('welcome', compact('activeTickets', 'recentTickets'));
 });
 
 // Ruta publica para clientes y creación de tickets (Kiosco)
