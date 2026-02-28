@@ -1,0 +1,12 @@
+# Reglas del Proyecto: Sistema-Tickets
+
+## Herramientas Disponibles
+- **MCP MySQL**: Conectado vía `uv`. Úsalo para cualquier operación de datos.
+- **Context7**: Para obtener la documentacion adecuada segun alversion que ocupes de las librerias. siempre utiliza esta herramienta para obtener la documentacion.
+- **Skills**: Ubicadas en `.agent/skills/`. Úsalas para diseño frontend y lógica de negocio específica.
+
+## Reglas de Comportamiento
+1. **Validación de DB**: Antes de escribir cualquier Query o cambiar código del modelo, ejecuta `mysql_mcp_server` para leer el esquema actual. No asumas nombres de columnas.
+2. **Uso de Skills**: Para cambios en la UI, consulta las herramientas en `.agent/skills/frontend-design`.
+3. **Contexto de Proyecto**: Usa la skill `context7` para entender la arquitectura antes de proponer cambios estructurales.
+4. **Respuestas**: Mantén las explicaciones técnicas y orientadas a la implementación en este stack específico.
