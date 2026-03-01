@@ -155,7 +155,7 @@
                              x-transition:enter-end="opacity-100 scale-100">
                             <div>
                                 <div class="text-sm text-gray-500 dark:text-gray-400 font-semibold mb-1 uppercase">MÓDULO / AGENTE</div>
-                                <div class="text-lg font-bold text-gray-800 dark:text-gray-200" x-text="ticket.agent ? ticket.agent.name.split(' ')[0] : '---'"></div>
+                                <div class="text-lg font-bold text-gray-800 dark:text-gray-200" x-text="ticket.agent ? ticket.agent.name : '---'"></div>
                             </div>
                             <div class="text-right">
                                 <div class="text-4xl font-black tracking-tighter" 
@@ -189,7 +189,7 @@
                                 </span>
                                 <div>
                                     <p class="font-semibold text-gray-800 dark:text-gray-200">
-                                        Completado por <span x-text="ticket.agent ? ticket.agent.name.split(' ')[0] : '---'"></span>
+                                        Completado por <span x-text="ticket.agent ? ticket.agent.name : '---'"></span>
                                     </p>
                                     <p class="text-xs text-gray-500" x-text="formatDate(ticket.completed_at)"></p>
                                 </div>

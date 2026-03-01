@@ -11,6 +11,7 @@ Route::get('/', function () {
     $activeTickets = \App\Models\Ticket::where('status', 'in_progress')->with('agent')->get();
     $recentTickets = \App\Models\Ticket::where('status', 'completed')
         ->whereDate('completed_at', \Carbon\Carbon::today())
+        ->with('agent')
         ->orderBy('completed_at', 'desc')
         ->take(10)
         ->get();
