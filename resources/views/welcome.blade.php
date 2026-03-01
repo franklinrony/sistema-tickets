@@ -137,7 +137,8 @@
         </div>
 
         <!-- RIGHT COLUMN: MONITOR -->
-        <div class="w-full xl:w-7/12 flex flex-col pt-8 xl:pt-0 pl-0 xl:pl-8 border-t-2 xl:border-t-0 xl:border-l-2 border-gray-200 dark:border-gray-800">
+        <div class="w-full xl:w-7/12 flex flex-col pt-8 xl:pt-0 pl-0 xl:pl-8 border-t-2 xl:border-t-0 xl:border-l-2 border-gray-200 dark:border-gray-800"
+             x-data="monitorComponent(@js($activeTickets), @js($recentTickets))">
             <!-- Llamados en Curso -->
             <div class="mb-8">
                 <h3 class="text-xl font-black text-gray-900 dark:text-white uppercase tracking-wider mb-6 flex items-center">
@@ -145,25 +146,28 @@
                     Atendiendo Ahora
                 </h3>
                 
-                @if($activeTickets && $activeTickets->count() > 0)
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        @foreach($activeTickets as $ticket)
-                            <div class="glass-panel rounded-2xl p-6 flex items-center justify-between border-l-8 {{ $ticket->priority === 'vip' ? 'border-l-purple-500' : 'border-l-blue-500' }}">
-                                <div>
-                                    <div class="text-sm text-gray-500 dark:text-gray-400 font-semibold mb-1">MÓDULO / AGENTE</div>
-                                    <div class="text-lg font-bold text-gray-800 dark:text-gray-200">{{ explode(' ', $ticket->agent->name)[0] }}</div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-4xl font-black {{ $ticket->priority === 'vip' ? 'text-purple-600 dark:text-purple-400' : 'text-blue-600 dark:text-blue-400' }} tracking-tighter">{{ $ticket->prefix_id }}</div>
-                                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" x-show="activeTickets.length > 0">
+                    <template x-for="ticket in activeTickets" :key="ticket.id">
+                        <div class="glass-panel rounded-2xl p-6 flex items-center justify-between border-l-8 transition-all duration-500"
+                             :class="ticket.priority === 'vip' ? 'border-l-purple-500' : 'border-l-blue-500'"
+                             x-transition:enter="ease-out duration-500"
+                             x-transition:enter-start="opacity-0 scale-95"
+                             x-transition:enter-end="opacity-100 scale-100">
+                            <div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400 font-semibold mb-1 uppercase">MÓDULO / AGENTE</div>
+                                <div class="text-lg font-bold text-gray-800 dark:text-gray-200" x-text="ticket.agent ? ticket.agent.name.split(' ')[0] : '---'"></div>
                             </div>
-                        @endforeach
-                    </div>
-                @else
-                    <div class="glass-panel rounded-2xl p-8 text-center text-gray-500 dark:text-gray-400 font-medium">
-                        Todos los agentes están disponibles o en espera de nuevos clientes.
-                    </div>
-                @endif
+                            <div class="text-right">
+                                <div class="text-4xl font-black tracking-tighter" 
+                                     :class="ticket.priority === 'vip' ? 'text-purple-600 dark:text-purple-400' : 'text-blue-600 dark:text-blue-400'"
+                                     x-text="ticket.prefix_id"></div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <div class="glass-panel rounded-2xl p-8 text-center text-gray-500 dark:text-gray-400 font-medium" x-show="activeTickets.length === 0">
+                    Todos los agentes están disponibles o en espera de nuevos clientes.
+                </div>
             </div>
 
             <!-- Últimos 10 Atendidos -->
@@ -172,28 +176,81 @@
                     Historial Reciente
                 </h3>
                 
-                @if($recentTickets && $recentTickets->count() > 0)
-                    <div class="glass-panel rounded-2xl overflow-hidden divide-y divide-gray-200/50 dark:divide-gray-700/50">
-                        @foreach($recentTickets as $ticket)
-                            <div class="p-4 flex justify-between items-center hover:bg-gray-100/50 dark:hover:bg-gray-800/50 transition-colors">
-                                <div class="flex items-center gap-4">
-                                    <span class="inline-flex w-12 h-12 rounded-full items-center justify-center font-bold text-sm {{ $ticket->priority === 'vip' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300' }}">
-                                        {{ $ticket->prefix_id }}
-                                    </span>
-                                    <div>
-                                        <p class="font-semibold text-gray-800 dark:text-gray-200">Completado por {{ explode(' ', $ticket->agent->name)[0] }}</p>
-                                        <p class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($ticket->completed_at)->diffForHumans() }}</p>
-                                    </div>
+                <div class="glass-panel rounded-2xl overflow-hidden divide-y divide-gray-200/50 dark:divide-gray-700/50" x-show="recentTickets.length > 0">
+                    <template x-for="ticket in recentTickets" :key="ticket.id">
+                        <div class="p-4 flex justify-between items-center hover:bg-gray-100/50 dark:hover:bg-gray-800/50 transition-colors"
+                             x-transition:enter="ease-out duration-500"
+                             x-transition:enter-start="opacity-0 -translate-y-4"
+                             x-transition:enter-end="opacity-100 translate-y-0">
+                            <div class="flex items-center gap-4">
+                                <span class="inline-flex w-12 h-12 rounded-full items-center justify-center font-bold text-sm"
+                                      :class="ticket.priority === 'vip' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300'"
+                                      x-text="ticket.prefix_id">
+                                </span>
+                                <div>
+                                    <p class="font-semibold text-gray-800 dark:text-gray-200">
+                                        Completado por <span x-text="ticket.agent ? ticket.agent.name.split(' ')[0] : '---'"></span>
+                                    </p>
+                                    <p class="text-xs text-gray-500" x-text="formatDate(ticket.completed_at)"></p>
                                 </div>
-                                <span class="px-3 py-1 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 rounded-full text-xs font-bold uppercase">Finalizado</span>
                             </div>
-                        @endforeach
-                    </div>
-                @else
-                    <div class="text-center py-6 text-gray-400 italic">No hay tickets finalizados el día de hoy aún.</div>
-                @endif
+                            <span class="px-3 py-1 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 rounded-full text-xs font-bold uppercase">Finalizado</span>
+                        </div>
+                    </template>
+                </div>
+                <div class="text-center py-6 text-gray-400 italic" x-show="recentTickets.length === 0">
+                    No hay tickets finalizados el día de hoy aún.
+                </div>
             </div>
         </div>
+
+        <script>
+            document.addEventListener('alpine:init', () => {
+                Alpine.data('monitorComponent', (initialActive, initialRecent) => ({
+                    activeTickets: initialActive,
+                    recentTickets: initialRecent,
+                    init() {
+                        console.log('Monitor Alpine Component Initialized');
+                        if (window.Echo) {
+                            console.log('Echo is available, subscribing to tickets channel...');
+                            window.Echo.channel('tickets')
+                                .listen('.App\\Events\\TicketUpdated', (e) => {
+                                    console.log('Ticket Event Received:', e);
+                                    this.handleTicketUpdate(e.ticket);
+                                });
+                        } else {
+                            console.error('Echo is NOT available on window object');
+                        }
+                    },
+                    handleTicketUpdate(ticket) {
+                        // Remove from active if it's there
+                        this.activeTickets = this.activeTickets.filter(t => t.id !== ticket.id);
+                        
+                        if (ticket.status === 'in_progress') {
+                            this.activeTickets.unshift(ticket);
+                            // Play a sound or notification?
+                            this.playNotification();
+                        } else if (ticket.status === 'completed') {
+                            // Add to recent
+                            this.recentTickets.unshift(ticket);
+                            // Keep only last 10
+                            if (this.recentTickets.length > 10) {
+                                this.recentTickets.pop();
+                            }
+                        }
+                    },
+                    formatDate(dateStr) {
+                        if (!dateStr) return '';
+                        const date = new Date(dateStr);
+                        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    },
+                    playNotification() {
+                        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+                        audio.play().catch(e => console.log('Audio play failed:', e));
+                    }
+                }));
+            });
+        </script>
     </div>
 </body>
 </html>
