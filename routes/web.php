@@ -57,6 +57,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::prefix('admin')->middleware(['role:admin'])->group(function () {
             Route::get('/dashboard', [AdminController::class , 'dashboard'])->name('admin.dashboard');
             Route::post('/transfer-queue', [AdminController::class , 'transferQueue'])->name('admin.transfer_queue');
+            Route::post('/pauses', [AdminController::class , 'storePause'])->name('admin.pauses.store');
+            Route::delete('/pauses/{pause}', [AdminController::class , 'destroyPause'])->name('admin.pauses.destroy');
         }
         );
     });
