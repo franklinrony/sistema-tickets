@@ -108,4 +108,31 @@ php artisan queue:work
 
 ---
 
+## 🖼️ Capturas de Pantalla
+
+A continuación, algunas vistas del sistema en funcionamiento:
+
+<details>
+<summary><b>Haz clic para ver las capturas relacionadas al sistema</b></summary>
+
+<br>
+
+![Vista 1](./capturas/chrome_BgwEPAtgkN.png)
+
+![Vista 2](./capturas/chrome_G6yxBG9O2x.png)
+
+![Vista 3](./capturas/chrome_KNVXxd2fIE.png)
+
+![Vista 4](./capturas/chrome_MHnY1GLiZb.png)
+
+![Vista 5](./capturas/chrome_XpPAk6HQYb.png)
+
+![Vista 6](./capturas/chrome_iPcN8h4zPv.png)
+
+![Vista 7](./capturas/chrome_p4amOeEcZU.png)
+
+</details>
+
+---
+
 Desarrollado con ❤️ para una gestión de turnos impecable.
