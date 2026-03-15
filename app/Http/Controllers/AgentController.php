@@ -42,6 +42,8 @@ class AgentController extends Controller
             'attended_at' => now()
         ]);
 
+        broadcast(new \App\Events\TicketUpdated($ticket));
+
         return redirect()->back()->with('success', 'Atendiendo ticket ' . $ticket->prefix_id);
     }
 
@@ -59,6 +61,8 @@ class AgentController extends Controller
             $user = Auth::user();
             $user->decrement('tickets_assigned');
         });
+
+        broadcast(new \App\Events\TicketUpdated($ticket));
 
         return redirect()->back()->with('success', 'Ticket ' . $ticket->prefix_id . ' completado.');
     }

@@ -79,7 +79,18 @@ class AdminController extends Controller
         // Cola global en progreso
         $activeQueue = Ticket::with('agent')->whereIn('status', ['pending', 'in_progress'])->orderBy('created_at', 'asc')->get();
 
-        return view('admin.dashboard', compact('agentsData', 'ticketTypes', 'activeQueue', 'dateFrom', 'dateTo'));
+        // Pausas largas programadas o activas (vacaciones, incapacidades)
+        $scheduledPauses = Pause::with('agent')
+            ->where('type', 'larga')
+            ->where(function ($q) {
+            $q->whereNull('end_time')->orWhere('end_time', '>=', now());
+        })
+            ->orderBy('start_time', 'asc')
+            ->get();
+
+        $allAgents = User::role('agente')->get();
+
+        return view('admin.dashboard', compact('agentsData', 'allAgents', 'ticketTypes', 'activeQueue', 'scheduledPauses', 'dateFrom', 'dateTo'));
     }
 
     public function transferQueue(Request $request)
@@ -98,5 +109,31 @@ class AdminController extends Controller
             DB::rollBack();
             return redirect()->back()->with('error', 'Ocurrió un error en la transferencia de cola.');
         }
+    }
+
+    public function storePause(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'reason' => 'required|string|max:255',
+            'start_time' => 'required|date',
+            'end_time' => 'required|date|after:start_time',
+        ]);
+
+        Pause::create([
+            'user_id' => $request->user_id,
+            'type' => 'larga',
+            'reason' => $request->reason,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
+        ]);
+
+        return redirect()->back()->with('success', 'Ausencia o pausa larga programada exitosamente.');
+    }
+
+    public function destroyPause(Pause $pause)
+    {
+        $pause->delete();
+        return redirect()->back()->with('success', 'Ausencia o pausa larga eliminada.');
     }
 }

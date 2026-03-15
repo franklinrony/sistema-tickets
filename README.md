@@ -1,59 +1,138 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🎫 Sistema de Tickets con Prioridades en Tiempo Real
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Bienvenido al **Sistema de Gestión de Tickets**, una solución moderna y eficiente construida con **Laravel 11**, **Tailwind CSS**, **Alpine.js** y **Laravel Reverb**. Este sistema permite gestionar colas de atención con prioridades (VIP y Normal) y actualizaciones instantáneas mediante WebSockets.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Características Principales
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+-   **Kiosco de Tickets**: Interfaz pública para que los clientes soliciten su turno.
+-   **Priorización Inteligente**: Sistema de colas que prioriza automáticamente los tickets VIP.
+-   **Actualización en Tiempo Real**: Visualización de turnos ("Atendiendo Ahora" y "Historial") que se actualiza automáticamente sin recargar la página gracias a **Laravel Reverb**.
+-   **Panel de Agentes**: Gestión de disponibilidad, atención de tickets y registro de pausas de trabajo.
+-   **Dashboard Administrativo**: Supervisión global y herramientas para transferir colas de atención.
+-   **Diseño Premium**: Interfaz moderna, responsive y con soporte para modo oscuro.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 👥 Usuarios de Prueba
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Para probar las diferentes funcionalidades del sistema, puedes utilizar las siguientes credenciales generadas por el seeder:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Rol | Email | Password |
+| :--- | :--- | :--- |
+| **Administrador** | `admin@sistema.com` | `password` |
+| **Agente VIP** | `agente1@sistema.com` | `password` |
+| **Agente Normal** | `agente2@sistema.com` | `password` |
+| **Agente Aprendiz** | `agente3@sistema.com` | `password` |
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🛠️ Requisitos del Sistema
 
-### Premium Partners
+-   PHP 8.2 o superior
+-   Composer
+-   Node.js & NPM
+-   MySQL / SQLite / PostgreSQL
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+## ⚙️ Pasos para la Instalación
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Sigue estos pasos para poner en marcha el proyecto en tu entorno local:
 
-## Code of Conduct
+### 1. Clonar el repositorio
+```bash
+git clone https://github.com/franklinrony/sistema-tickets
+cd sistema-tickets
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 2. Instalar dependencias
+Instala las dependencias de PHP y JavaScript:
+```bash
+composer install
+npm install
+```
 
-## Security Vulnerabilities
+### 3. Configuración del Entorno
+Copia el archivo de ejemplo y configura tu base de datos y variables de Reverb:
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+*Asegúrate de configurar `DB_DATABASE` y otras credenciales en el archivo `.env`.*
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 4. Base de Datos
+Ejecuta las migraciones y carga los datos de prueba:
+```bash
+php artisan migrate --seed
+```
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 🏃 Ejecución del Proyecto
+
+Para que el sistema funcione correctamente con todas sus características (incluyendo tiempo real), debes ejecutar los siguientes comandos en terminales separadas:
+
+### **Opción A: Laravel (Backend & Server)**
+Sirve la aplicación PHP:
+```bash
+php artisan serve
+```
+
+### **Opción B: NPM (Frontend Assets)**
+Compila y vigila los cambios en el CSS y JS:
+```bash
+npm run dev
+```
+
+### **Opción C: Reverb (WebSockets)**
+Para habilitar las actualizaciones en tiempo real:
+```bash
+php artisan reverb:start
+```
+
+### **Opción D: Colas (Queue Worker)**
+Si se utilizan jobs en segundo plano (opcional pero recomendado):
+```bash
+php artisan queue:work
+```
+
+---
+
+## 📸 Vistas Importantes
+
+-   **Página Principal (Turnero):** `http://localhost:8000/`
+-   **Login:** `http://localhost:8000/login`
+-   **Dashboard (Dinámico):** `http://localhost:8000/dashboard`
+
+---
+
+## 🖼️ Capturas de Pantalla
+
+A continuación, algunas vistas del sistema en funcionamiento:
+
+<details>
+<summary><b>Haz clic para ver las capturas relacionadas al sistema</b></summary>
+
+<br>
+
+![Vista 1](./capturas/chrome_BgwEPAtgkN.png)
+
+![Vista 2](./capturas/chrome_G6yxBG9O2x.png)
+
+![Vista 3](./capturas/chrome_KNVXxd2fIE.png)
+
+![Vista 4](./capturas/chrome_MHnY1GLiZb.png)
+
+![Vista 5](./capturas/chrome_XpPAk6HQYb.png)
+
+![Vista 6](./capturas/chrome_iPcN8h4zPv.png)
+
+![Vista 7](./capturas/chrome_p4amOeEcZU.png)
+
+</details>
+
+---
+
+Desarrollado con ❤️ para una gestión de turnos impecable.

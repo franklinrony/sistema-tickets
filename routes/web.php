@@ -8,7 +8,15 @@ use App\Http\Controllers\PauseController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    $activeTickets = \App\Models\Ticket::where('status', 'in_progress')->with('agent')->get();
+    $recentTickets = \App\Models\Ticket::where('status', 'completed')
+        ->whereDate('completed_at', \Carbon\Carbon::today())
+        ->with('agent')
+        ->orderBy('completed_at', 'desc')
+        ->take(10)
+        ->get();
+
+    return view('welcome', compact('activeTickets', 'recentTickets'));
 });
 
 // Ruta publica para clientes y creación de tickets (Kiosco)
@@ -49,6 +57,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::prefix('admin')->middleware(['role:admin'])->group(function () {
             Route::get('/dashboard', [AdminController::class , 'dashboard'])->name('admin.dashboard');
             Route::post('/transfer-queue', [AdminController::class , 'transferQueue'])->name('admin.transfer_queue');
+            Route::post('/pauses', [AdminController::class , 'storePause'])->name('admin.pauses.store');
+            Route::delete('/pauses/{pause}', [AdminController::class , 'destroyPause'])->name('admin.pauses.destroy');
         }
         );
     });

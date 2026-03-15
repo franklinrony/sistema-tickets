@@ -97,6 +97,89 @@
                 </div>
             </div>
 
+            <!-- Sección de Pausas Largas (Vacaciones, Incapacidades, etc.) -->
+            <div class="bg-white dark:bg-gray-800 shadow sm:rounded-lg p-6 mb-6">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 border-b pb-2 dark:border-gray-700">Gestionar Ausencias (Vacaciones, Incapacidades, Capacitaciones)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- Formulario de Agendamiento -->
+                    <div class="md:col-span-1 bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                        <h4 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-3">Registrar Nueva Ausencia</h4>
+                        <form method="POST" action="{{ route('admin.pauses.store') }}" class="space-y-4">
+                            @csrf
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Agente</label>
+                                <select name="user_id" required class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm dark:bg-gray-700 dark:text-white dark:border-gray-600 text-sm">
+                                    <option value="">Seleccione un agente...</option>
+                                    @foreach($allAgents as $agentOpt)
+                                    <option value="{{ $agentOpt->id }}">{{ $agentOpt->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Motivo</label>
+                                <select name="reason" required class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm dark:bg-gray-700 dark:text-white dark:border-gray-600 text-sm">
+                                    <option value="Vacaciones">Vacaciones</option>
+                                    <option value="Incapacidad Medica">Incapacidad Médica</option>
+                                    <option value="Capacitacion">Capacitación</option>
+                                    <option value="Otro Motivo">Otro Motivo</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Fecha y Hora de Inicio</label>
+                                <input type="datetime-local" name="start_time" required class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm dark:bg-gray-700 dark:text-white dark:border-gray-600 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Fecha y Hora de Fin</label>
+                                <input type="datetime-local" name="end_time" required class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm dark:bg-gray-700 dark:text-white dark:border-gray-600 text-sm">
+                            </div>
+                            <button type="submit" class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Programar Ausencia
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Lista de Ausencias Activas/Programadas -->
+                    <div class="md:col-span-2 overflow-y-auto max-h-80">
+                        <h4 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-3 border-b border-gray-200 dark:border-gray-700 pb-2">Ausencias Activas y Programadas</h4>
+                        <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+                            @forelse($scheduledPauses as $pause)
+                                <li class="py-3 flex justify-between items-center bg-gray-50 dark:bg-gray-900/30 px-3 rounded-lg mb-2 border border-gray-100 dark:border-gray-700">
+                                    <div>
+                                        <p class="text-sm font-bold text-gray-900 dark:text-white">{{ $pause->agent ? $pause->agent->name : 'Desconocido' }} - <span class="text-indigo-600 dark:text-indigo-400">{{ $pause->reason }}</span></p>
+                                        <p class="text-xs text-gray-500 mt-1">
+                                            Desde: <span class="font-semibold">{{ \Carbon\Carbon::parse($pause->start_time)->format('d M Y, H:i') }}</span><br>
+                                            Hasta: <span class="font-semibold">{{ $pause->end_time ? \Carbon\Carbon::parse($pause->end_time)->format('d M Y, H:i') : 'Indefinido' }}</span>
+                                        </p>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        @if(now()->between($pause->start_time, $pause->end_time ?? now()->addDay()))
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">En Curso</span>
+                                        @else
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">Programada</span>
+                                        @endif
+
+                                        <form method="POST" action="{{ route('admin.pauses.destroy', $pause->id) }}" onsubmit="return confirm('¿Estás seguro de cancelar/eliminar esta ausencia?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 ml-3" title="Eliminar/Cancelar">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </li>
+                            @empty
+                                <div class="text-center py-4 text-gray-500 text-sm">
+                                    No hay ausencias programadas.
+                                </div>
+                            @endforelse
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
             <!-- Tabla de Agentes (KPIs Detallados) -->
             <div class="bg-white dark:bg-gray-800 shadow sm:rounded-lg overflow-hidden">
                 <div class="px-6 py-5 border-b border-gray-200 dark:border-gray-700">
